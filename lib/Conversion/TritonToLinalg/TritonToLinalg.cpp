@@ -64,6 +64,7 @@
 #include "triton-linalg/Conversion/TritonToLinalg/TritonToLinalg.h"
 #include "triton-linalg/Conversion/TritonToLinalg/TypeConverter.h"
 #include "triton-linalg/Conversion/TritonToLinalg/Utils.h"
+#include "triton-linalg/Conversion/TritonToTensor/TritonToTensor.h"
 #include "triton-linalg/Dialect/Auxiliary/IR/AuxiliaryDialect.h"
 #include "triton-linalg/Dialect/LinalgExt/IR/LinalgExtOps.h"
 #include "triton-linalg/Dialect/LinalgExt/Utils/Utils.h"
@@ -1678,6 +1679,7 @@ void triton::TritonToLinalgPass::populatePatterns(
   patterns.add<OptimizationBarrierOpPattern, GPUBarrierOpPattern>(converter,
                                                                   context);
   patterns.add<PtrSelectOpPattern>(converter, context, 0);
+  populateTritonToTensorPatterns(patterns);
   populateTritonToLinalgPatterns(patterns, converter);
   populateArithToLinalgPatterns(patterns);
   populateArithConversionPatterns(patterns);

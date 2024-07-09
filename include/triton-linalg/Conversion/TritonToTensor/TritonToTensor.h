@@ -11,7 +11,11 @@
 
 namespace mlir {
 class Pass;
+class RewritePatternSet;
 namespace triton {
+
+void populateTritonToTensorPatterns(RewritePatternSet &patterns);
+
 /// Create a pass to convert a subset of Triton ops to Tensor ops.
 std::unique_ptr<mlir::Pass> createTritonToTensorPass();
 } // namespace triton

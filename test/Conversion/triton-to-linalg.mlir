@@ -47,6 +47,14 @@ tt.func @splat_ptr(%arg0: !tt.ptr<f32>) {
 }
 
 // -----
+// CHECK: tensor.insert_slice %arg0
+// CHECK: tensor.insert_slice %arg1
+tt.func public @cat(%arg0: tensor<32xf32>, %arg1: tensor<32xf32>) {
+  %0 = tt.cat %arg0, %arg1 : tensor<32xf32> -> tensor<64xf32>
+  tt.return
+}
+
+// -----
 // CHECK-LABEL: @expand_dims_int
 tt.func @expand_dims_int(%arg0: tensor<8xi32>) {
   // CHECK: tensor.expand_shape %arg0 {{\[\[0, 1]]}}
@@ -1757,7 +1765,7 @@ tt.func @scan_add_1d_size1_f32_reverse(%arg0: tensor<1xf32>) -> tensor<1xf32> {
 
 // -----
 tt.func @tt_mulhiui_scalar_i32(%arg0: i32, %arg1: i32) {
-  // CHECK: math_ext.mulhiui 
+  // CHECK: math_ext.mulhiui
   %0 = tt.mulhiui %arg0, %arg1 : i32
   tt.return
 }
@@ -1870,7 +1878,7 @@ tt.func @tt_precise_divf_vector_f32(%arg0: tensor<128xf32>, %arg1: tensor<128xf3
 
 // -----
 // CHECK-LABEL: @clampf_propagateNan_all_f32(
-// CHECK-SAME:                      %[[ARG0:.*]]: tensor<32xf32>, %[[ARG1:.*]]: tensor<32xf32>, %[[ARG2:.*]]: tensor<32xf32>    
+// CHECK-SAME:                      %[[ARG0:.*]]: tensor<32xf32>, %[[ARG1:.*]]: tensor<32xf32>, %[[ARG2:.*]]: tensor<32xf32>
 tt.func @clampf_propagateNan_all_f32(%x: tensor<32xf32>, %min: tensor<32xf32>, %max: tensor<32xf32>) -> tensor<32xf32> {
   // CHECK: %[[MAPPED:.*]] = linalg.map { arith.maximumf } ins(%[[ARG0]], %[[ARG1]] : tensor<32xf32>, tensor<32xf32>)
   // CHECK: linalg.map { arith.minimumf } ins(%[[MAPPED]], %[[ARG2]] : tensor<32xf32>, tensor<32xf32>)

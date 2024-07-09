@@ -44,7 +44,7 @@ using namespace mlir;
 using namespace triton;
 
 namespace {
-struct ConvertCatToinsertSlicePattern
+struct TritonCatPattern
     : public OpConversionPattern<triton::CatOp> {
   using OpConversionPattern<triton::CatOp>::OpConversionPattern;
 
@@ -85,6 +85,12 @@ struct TritonToTensorPass : public TritonToTensorPassBase<TritonToTensorPass> {
 };
 } // namespace
 
+void mlir::triton::populateTritonToTensorPatterns(RewritePatternSet &patterns) {
+  MLIRContext *context = patterns.getContext();
+  // Some triton ops lower to tensor ops.
+  patterns.add<TritonCatPattern>(context);
+}
+
 void TritonToTensorPass::runOnOperation() {
   MLIRContext *context = &getContext();
   ConversionTarget target(*context);
@@ -94,7 +100,7 @@ void TritonToTensorPass::runOnOperation() {
 
   // Rewrite patterns.
   RewritePatternSet patterns(context);
-  patterns.add<ConvertCatToinsertSlicePattern>(context);
+  populateTritonToTensorPatterns(patterns);
   if (failed(
           applyPartialConversion(getOperation(), target, std::move(patterns))))
     return signalPassFailure();
